@@ -1,0 +1,14 @@
+language: shell
+before_script:
+  - git clone https://github.com/asdf-vm/asdf.git
+  - . asdf/asdf.sh
+  - asdf plugin-add kubectl https://github.com/Banno/asdf-kubectl.git
+  - echo "kubectl $(asdf list-all kubectl | grep -v 'alpha\|beta' | tail -n1)" >> .tool-versions
+  - asdf install
+script:
+  - asdf plugin-add kubelogin ./
+  - asdf list-all kubelogin
+  - asdf plugin-test kubelogin ./ 'kubectl oidc-login --help'
+os:
+  - osx
+  - linux
