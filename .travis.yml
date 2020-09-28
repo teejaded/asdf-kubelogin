@@ -3,12 +3,14 @@ before_script:
   - git clone https://github.com/asdf-vm/asdf.git
   - . asdf/asdf.sh
   - asdf plugin-add kubectl https://github.com/Banno/asdf-kubectl.git
-  - echo "kubectl $(asdf list-all kubectl | grep -v 'alpha\|beta' | tail -n1)" >> .tool-versions
-  - asdf install
+  - KUBECTL_VERSION="$(asdf latest kubectl)"
+  - asdf install kubectl "$KUBECTL_VERSION"
+  - asdf global kubectl "$KUBECTL_VERSION"
 script:
+  - KUBECTL_BIN="$(asdf where kubectl)/bin/kubectl"
   - asdf plugin-add kubelogin ./
   - asdf list-all kubelogin
-  - asdf plugin-test kubelogin ./ 'kubectl oidc-login --help'
+  - asdf plugin-test kubelogin ./ "$KUBECTL_BIN oidc-login --help"
 os:
   - osx
   - linux
